@@ -1,4 +1,4 @@
-import { LayoutDashboard, MessageCircle, Activity, Settings, MoreVertical, User } from "lucide-react";
+import { LayoutDashboard, MessageCircle, Activity, Settings, MoreVertical, User, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
@@ -162,6 +163,16 @@ export function AppSidebar() {
 
       {/* Profile Block */}
       <SidebarFooter className="border-t p-3">
+        <div className="flex items-center justify-between mb-2">
+          <SidebarTrigger className="flex items-center justify-center h-8 w-8 rounded-md border bg-muted hover:bg-muted/80">
+            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </SidebarTrigger>
+          {!isCollapsed && (
+            <span className="text-xs text-muted-foreground">
+              Réduire
+            </span>
+          )}
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-2 w-full hover:bg-accent rounded-lg p-2 transition-colors">
