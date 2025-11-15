@@ -6,6 +6,8 @@ import { Loader2, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { WhatsAppMessage } from "@/components/WhatsAppMessage";
 import { AuditTrail } from "@/components/AuditTrail";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 const EXAMPLE_CONTEXT = "Marie a laissé un panier hier soir avec un Sweat Bleu (39,90€) et un Pantalon Noir (40€). Elle a quitté la page sans finaliser.";
 
@@ -94,17 +96,21 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-3xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Recurmind · WhatsApp CRM Agent
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Outcome-first autonomous agent
-          </p>
-        </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col">
+          {/* Header with Sidebar Trigger */}
+          <header className="h-14 border-b flex items-center px-4 gap-3 sticky top-0 bg-background z-10">
+            <SidebarTrigger />
+            <div className="flex-1 text-center">
+              <h1 className="text-lg font-bold">Recurmind · WhatsApp CRM Agent</h1>
+              <p className="text-xs text-muted-foreground">Outcome-first autonomous agent</p>
+            </div>
+          </header>
+
+          <div className="flex-1 overflow-auto">
+            <div className="container max-w-3xl mx-auto px-4 py-8">
 
         {/* Input Section */}
         <Card className="mb-6 border">
@@ -206,8 +212,11 @@ const Index = () => {
             <AuditTrail events={output.auditEvents} />
           </div>
         )}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
