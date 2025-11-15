@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, CheckCircle2, Mail } from "lucide-react";
+import { Loader2, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { WhatsAppMessage } from "@/components/WhatsAppMessage";
+import { AuditTrail } from "@/components/AuditTrail";
 
 const EXAMPLE_CONTEXT = {
   name: "Marie",
@@ -17,13 +18,15 @@ const EXAMPLE_CONTEXT = {
   last_action: "abandoned_cart"
 };
 
+interface ChatMessage {
+  from: "agent" | "client";
+  content: string;
+  timestamp: string;
+}
+
 interface AgentOutput {
-  action: string;
-  reason: string;
-  message: string;
-  channel: string;
-  status: string;
-  memory_id: string;
+  messages: ChatMessage[];
+  auditEvents: Array<{ type: string; label: string; value: string }>;
 }
 
 const Index = () => {
@@ -38,8 +41,8 @@ const Index = () => {
     } catch {
       toast({
         variant: "destructive",
-        title: "Invalid JSON",
-        description: "Please enter valid JSON format",
+        title: "JSON invalide",
+        description: "Veuillez entrer un format JSON valide",
       });
       return;
     }
@@ -47,57 +50,85 @@ const Index = () => {
     setIsLoading(true);
     setOutput(null);
 
-    // Simulate agent processing
+    // Simulate progressive WhatsApp conversation
     setTimeout(() => {
+      const mockMessages: ChatMessage[] = [
+        {
+          from: "agent",
+          content: "Salut Marie ! 👋 J'ai vu que tu as abandonné ton panier avec le Sweat Bleu et le Pantalon Noir (79.90€).\n\nProfite de -15% avec le code COMEBACK15, valable 24h ! 🎁",
+          timestamp: "14:32"
+        },
+        {
+          from: "client",
+          content: "Ah super ! Je peux passer commande maintenant ?",
+          timestamp: "14:35"
+        },
+        {
+          from: "agent",
+          content: "Oui bien sûr ! Je valide ta commande avec le code promo appliqué. Total : 67.92€\n\nTu confirmes ? ✅",
+          timestamp: "14:35"
+        },
+        {
+          from: "client",
+          content: "Oui je confirme !",
+          timestamp: "14:36"
+        },
+        {
+          from: "agent",
+          content: "Parfait ! ✨\n\nCommande validée et payée.\nNuméro de commande : #1234\n\nTu recevras ton colis sous 48h. Merci Marie ! 🙏",
+          timestamp: "14:36"
+        }
+      ];
+
       const mockOutput: AgentOutput = {
-        action: "abandoned_cart_recovery",
-        reason: "Client a abandonné un panier de 79.9 euros avec 2 articles",
-        message: "Salut Marie ! 👋 Ton panier t'attend avec le Sweat Bleu et le Pantalon Noir. Profite de -15% avec le code COMEBACK15 valable 24h !",
-        channel: "email",
-        status: "sent",
-        memory_id: `qdrant_${Date.now()}_${Math.random().toString(36).substring(7)}`
+        messages: mockMessages,
+        auditEvents: [
+          { type: "action", label: "Action", value: "abandoned_cart_recovery" },
+          { type: "payment", label: "Paiement", value: "succeeded" },
+          { type: "order", label: "Commande", value: "created_order_1234" },
+          { type: "memory", label: "Mémoire Qdrant", value: `qdrant_${Date.now()}_${Math.random().toString(36).substring(7)}` }
+        ]
       };
       
       setOutput(mockOutput);
       setIsLoading(false);
       
       toast({
-        title: "Agent executed successfully",
-        description: "Action completed and message sent",
+        title: "Agent exécuté avec succès",
+        description: "Conversation WhatsApp terminée",
       });
-    }, 2500);
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container max-w-4xl mx-auto px-4 py-12">
+      <div className="container max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <Sparkles className="w-6 h-6 text-primary" />
-            <h1 className="text-4xl font-bold text-foreground">Agent CRM</h1>
-          </div>
-          <p className="text-muted-foreground text-lg">
-            Autonomous customer engagement in action
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Recurmind · WhatsApp CRM Agent
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Outcome-first autonomous agent
           </p>
         </div>
 
         {/* Input Section */}
-        <Card className="mb-8 border-2">
-          <CardContent className="pt-6">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-foreground">
-                  Customer Context
-                </label>
-                <Badge variant="secondary" className="text-xs">JSON</Badge>
-              </div>
+        <Card className="mb-6 border">
+          <CardContent className="pt-4 pb-4">
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Contexte client (JSON)
+              </label>
               <Textarea
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
-                placeholder="Enter customer context as JSON..."
-                className="font-mono text-sm min-h-[240px] resize-none"
+                placeholder='{ "name": "Marie", "email": "...", "cart_value": ... }'
+                className="font-mono text-xs min-h-[120px] resize-none"
               />
+              <p className="text-xs text-muted-foreground">
+                Collez le contexte client et déclenchez l'agent
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -108,90 +139,56 @@ const Index = () => {
             onClick={handleRunAgent}
             disabled={isLoading}
             size="lg"
-            className="px-8 font-semibold text-base h-12 shadow-lg hover:shadow-xl transition-all"
+            className="px-6 font-semibold gap-2"
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Agent Processing...
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Agent en cours...
               </>
             ) : (
               <>
-                <Sparkles className="w-5 h-5 mr-2" />
-                Run Agent
+                <MessageCircle className="w-4 h-4" />
+                Déclencher l'agent WhatsApp
               </>
             )}
           </Button>
         </div>
 
-        {/* Output Section */}
+        {/* WhatsApp Chat Output */}
         {output && (
-          <Card className="border-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                {/* Header */}
-                <div className="flex items-start justify-between pb-4 border-b">
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-1">
-                      Agent Output
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Autonomous decision and execution
-                    </p>
-                  </div>
-                  <Badge className="bg-success text-success-foreground">
-                    <CheckCircle2 className="w-3 h-3 mr-1" />
-                    {output.status}
-                  </Badge>
+          <div className="space-y-4 animate-in fade-in duration-500">
+            <Card className="border-2">
+              <CardContent className="pt-6 pb-6">
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b">
+                  <MessageCircle className="w-5 h-5 text-primary" />
+                  <h3 className="font-semibold text-foreground">
+                    Conversation WhatsApp
+                  </h3>
+                </div>
+                
+                <div className="space-y-1">
+                  {output.messages.map((msg, idx) => (
+                    <WhatsAppMessage
+                      key={idx}
+                      from={msg.from}
+                      content={msg.content}
+                      timestamp={msg.timestamp}
+                      isDelivered={true}
+                    />
+                  ))}
                 </div>
 
-                {/* Action & Reason */}
-                <div className="space-y-4">
-                  <div>
-                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-                      Action
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="font-mono text-sm">
-                        {output.action}
-                      </Badge>
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{output.channel}</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-                      Reasoning
-                    </div>
-                    <p className="text-sm text-foreground leading-relaxed">
-                      {output.reason}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Message */}
-                <div className="bg-muted/50 rounded-lg p-4 border">
-                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                    Generated Message
-                  </div>
-                  <p className="text-foreground leading-relaxed">
-                    {output.message}
+                <div className="mt-4 pt-3 border-t">
+                  <p className="text-xs text-muted-foreground text-center">
+                    💾 Memory stored in Qdrant
                   </p>
                 </div>
+              </CardContent>
+            </Card>
 
-                {/* Proof */}
-                <div className="pt-4 border-t">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Memory ID</span>
-                    <code className="px-2 py-1 bg-secondary rounded font-mono text-foreground">
-                      {output.memory_id}
-                    </code>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            <AuditTrail events={output.auditEvents} />
+          </div>
         )}
       </div>
     </div>
