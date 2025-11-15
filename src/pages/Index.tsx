@@ -3,14 +3,15 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { AIAssistantInterface } from "@/components/ui/ai-assistant-interface";
 
 const Index = () => {
-
   return (
     <SidebarProvider>
-      <div className="h-screen flex w-full">
+      <div className="flex h-screen w-full">
         <AppSidebar />
-        <main className="flex-1 flex items-center justify-center bg-slate-50">
-          <div className="w-full max-w-4xl">
-            <AIAssistantInterface />
+        <main className="flex-1 bg-slate-50 overflow-auto">
+          <div className="flex h-full items-center justify-center p-6">
+            <div className="w-full max-w-5xl">
+              <AIAssistantInterface />
+            </div>
           </div>
         </main>
       </div>
