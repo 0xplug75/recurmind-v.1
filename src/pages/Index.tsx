@@ -7,16 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { WhatsAppMessage } from "@/components/WhatsAppMessage";
 import { AuditTrail } from "@/components/AuditTrail";
 
-const EXAMPLE_CONTEXT = {
-  name: "Marie",
-  email: "marie@test.com",
-  cart_value: 79.9,
-  products: [
-    { index: 1, name: "Sweat Bleu" },
-    { index: 2, name: "Pantalon Noir" }
-  ],
-  last_action: "abandoned_cart"
-};
+const EXAMPLE_CONTEXT = "Marie a laissé un panier hier soir avec un Sweat Bleu (39,90€) et un Pantalon Noir (40€). Elle a quitté la page sans finaliser.";
 
 interface ChatMessage {
   from: "agent" | "client";
@@ -25,24 +16,24 @@ interface ChatMessage {
 }
 
 interface AgentOutput {
+  reasoning: string;
+  action: string;
   messages: ChatMessage[];
   auditEvents: Array<{ type: string; label: string; value: string }>;
 }
 
 const Index = () => {
-  const [context, setContext] = useState(JSON.stringify(EXAMPLE_CONTEXT, null, 2));
+  const [context, setContext] = useState(EXAMPLE_CONTEXT);
   const [isLoading, setIsLoading] = useState(false);
   const [output, setOutput] = useState<AgentOutput | null>(null);
   const { toast } = useToast();
 
   const handleRunAgent = async () => {
-    try {
-      JSON.parse(context);
-    } catch {
+    if (!context.trim()) {
       toast({
         variant: "destructive",
-        title: "JSON invalide",
-        description: "Veuillez entrer un format JSON valide",
+        title: "Contexte vide",
+        description: "Veuillez décrire le contexte client",
       });
       return;
     }
@@ -81,6 +72,8 @@ const Index = () => {
       ];
 
       const mockOutput: AgentOutput = {
+        reasoning: "Contexte analysé : Cliente Marie, panier abandonné hier soir (79,90€). Produits identifiés : Sweat Bleu + Pantalon Noir. Intention détectée : récupération panier. Confiance : 0.94. Action optimale : relance personnalisée avec code promo -15% limité 24h pour créer urgence.",
+        action: "abandoned_cart_recovery",
         messages: mockMessages,
         auditEvents: [
           { type: "action", label: "Action", value: "abandoned_cart_recovery" },
@@ -118,16 +111,16 @@ const Index = () => {
           <CardContent className="pt-4 pb-4">
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Contexte client (JSON)
+                Contexte client (langage naturel)
               </label>
               <Textarea
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
-                placeholder='{ "name": "Marie", "email": "...", "cart_value": ... }'
-                className="font-mono text-xs min-h-[120px] resize-none"
+                placeholder="Ex: Marie a laissé un panier hier soir avec un Sweat Bleu et un Pantalon Noir..."
+                className="text-sm min-h-[100px] resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                Collez le contexte client et déclenchez l'agent
+                Décrivez la situation client en langage naturel
               </p>
             </div>
           </CardContent>
@@ -155,9 +148,32 @@ const Index = () => {
           </Button>
         </div>
 
-        {/* WhatsApp Chat Output */}
+        {/* Agent Output */}
         {output && (
           <div className="space-y-4 animate-in fade-in duration-500">
+            {/* Reasoning Section */}
+            <Card className="border">
+              <CardContent className="pt-4 pb-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Raisonnement de l'agent
+                    </span>
+                  </div>
+                  <p className="text-sm text-foreground/90 leading-relaxed">
+                    {output.reasoning}
+                  </p>
+                  <div className="mt-3 pt-3 border-t">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                      Action : {output.action}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* WhatsApp Chat */}
             <Card className="border-2">
               <CardContent className="pt-6 pb-6">
                 <div className="flex items-center gap-2 mb-4 pb-3 border-b">
