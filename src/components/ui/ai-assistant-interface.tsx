@@ -62,8 +62,8 @@ export function AIAssistantInterface() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center bg-white p-10 rounded-2xl shadow-sm">
-      <div className="w-full max-w-4xl space-y-6">
+    <div className="w-full bg-white p-10 rounded-2xl shadow-sm">
+      <div className="w-full max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2 mb-8">
           <h1 className="text-3xl font-bold text-foreground">Assistant IA Commerce</h1>
