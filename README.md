@@ -1,220 +1,189 @@
-Recurmind — Agentic Commerce Platform (MVP v0.1)
+---
 
-Autonomous cart-recovery agent powered by LLM reasoning and tokenized payments.
+# **Recurmind — Agentic Commerce Platform (MVP v0.1)**
 
-🚀 Introduction
+### *Autonomous cart-recovery agent powered by LLM reasoning + tokenized payments*
 
-Recurmind is an Agentic Commerce Platform that replaces manual e-commerce tasks with autonomous agents.
+---
+
+## 🚀 **Overview**
+
+Recurmind is an **Agentic Commerce Platform** that turns e-commerce workflows into autonomous processes.
 This MVP delivers the first working agent:
 
-🟢 Cart · Rescue Agent
+### **🟢 Cart · Rescue Agent**
 
-An AI agent that detects abandoned carts, reasons about customer intent, generates personalized WhatsApp-style recovery messages, obtains consent, and completes payments using tokenized agentic checkout.
+It detects abandoned carts, understands customer context, generates personalized WhatsApp-style messages, obtains consent, and completes payments using tokenized agentic checkout.
 
-A first working demo has already been shared with 30 e-commerce merchants, validating the concept.
+A first demo has already been shared with **30 e-commerce merchants**, confirming strong interest.
 
-🎯 Problem
+---
 
-Merchants lose revenue because:
+## 🧩 **Problem**
 
-Over 70% of carts are abandoned
+E-commerce merchants lose massive revenue because:
 
-They can’t message every customer in real time
-
-CRM automations are rigid and generic
-
-Tools require humans to babysit workflows
+*   70%+ of carts are abandoned
+*   They cannot message customers in real time
+*   CRM tools are rigid and rule-based
+*   Humans must supervise every step
 
 Recurmind introduces something new:
 
-An autonomous agent capable of thinking, deciding, and completing the checkout.
+> **A fully autonomous agent that thinks, decides, interacts, and completes the checkout.**
 
-💡 Solution — The Cart · Rescue Agent
+---
 
-The MVP implements a full autonomous loop:
+## 💡 **Solution — The Cart · Rescue Agent**
 
-Context extraction
+The MVP implements an autonomous end-to-end loop:
 
-name, items, total price, customer intent
+1.  **Extract customer + cart context**
+2.  **LLM reasoning** (action selection: `abandoned_cart_recovery`)
+3.  **Generate personalized recovery message**
+4.  **Send message via simulated WhatsApp (n8n)**
+5.  **Receive consent** (“yes”)
+6.  **Execute tokenized payment**
+    *   Crossmint agentic flow
+    *   Basis Theory tokenization
+7.  **Confirm order**
+8.  **Store actions as vectors in Qdrant**
 
-LLM reasoning
+This delivers a full chain:
+**intent → reasoning → action → payment → result**
 
-selects the correct action: abandoned_cart_recovery
+---
 
-Message generation
+## 🧠 **Agentic Architecture**
 
-human-like WhatsApp recovery message
+### **1. LLM Reasoning Engine**
 
-Messaging simulation via n8n
+*   Extracts structured context
+*   Determines the correct CRM action
+*   Generates human-like messaging
 
-Customer consent (simulated “yes”)
+### **2. Agent State Machine**
 
-Tokenized payment execution
+Core states:
+`thinking → message_ready → waiting_for_consent → payment_processing → success`
 
-Crossmint agentic flow
-
-Basis Theory tokenization
-
-Order confirmation
-
-Vector memory logging (Qdrant)
-
-This chain delivers:
-intent → reasoning → action → payment → result.
-
-🧠 Agentic Architecture
-1. LLM Reasoning
-
-Extracts structured context
-
-Selects optimal action
-
-Generates recovery messages
-
-2. Agent State Machine
-
-States include:
-thinking → message_ready → waiting_for_consent → processing_payment → success
-
-3. Invisible Interface
+### **3. Invisible Interface (UI)**
 
 Built with Next.js + shadcn/ui:
 
-Sidebar with agent status
+*   Sidebar with agent status
+*   AUTO / REVIEW modes
+*   Logs + confidence indicators
+*   Chat with pre-generated messages
 
-AUTO / REVIEW mode
+### **4. Tokenized Payments**
 
-Logs + confidence indicators
+*   Crossmint agentic checkout flow
+*   Basis Theory card tokenization
+*   Purchase intent → verification → payment intent
 
-Chat with pre-filled messages
+### **5. Memory Layer**
 
-4. Payment Layer
+*   All actions stored in **Qdrant vector database**
+*   Enables traceability & future agent self-improvement
 
-Crossmint tokenized credit card checkout
+---
 
-Basis Theory card tokenization
+## 🔁 **Demo Flow**
 
-Purchase intent → verification → payment intent
+1.  Merchant pastes an abandoned-cart scenario
+2.  Agent extracts → reasons → selects action
+3.  Agent generates ready-to-send message
+4.  Message sent via simulated WhatsApp (n8n)
+5.  Customer replies “yes” (simulated)
+6.  Crossmint tokenized payment succeeds
+7.  Agent confirms order
+8.  Qdrant logs the interaction
 
-5. Memory Layer
+---
 
-Qdrant vector database
+## 🛠️ **Technologies Used**
 
-Stores every action for traceability and future learning
+### **AI**
 
-🧪 Demo Flow
+*   OpenAI GPT (reasoning + messaging)
 
-User pastes abandoned-cart scenario
+### **Frontend**
 
-Agent extracts → reasons → selects action
+*   Next.js
+*   React
+*   Tailwind CSS
+*   shadcn/ui
+*   Framer Motion
 
-Agent proposes a ready-to-send message
+### **Agent Logic**
 
-Simulated WhatsApp send via n8n
+*   Custom LLM-driven context engine
+*   State machine for autonomous flows
 
-Customer replies “yes” (simulated)
+### **Automation**
 
-Tokenized payment executed via Crossmint
+*   n8n (WhatsApp simulation)
 
-Success confirmation displayed
+### **Payments**
 
-Action logged in Qdrant
+*   Crossmint **agentic credit-card flow**
+*   Basis Theory **tokenization**
 
-Clear, autonomous, end-to-end.
+### **Memory**
 
-🛠️ Technologies Used (Real)
-AI
+*   Qdrant vector database
 
-OpenAI GPT (reasoning + generation)
+### **Dev & Hosting**
 
-Frontend
+*   Vercel (local + preview)
+*   ngrok HTTPS (required for Crossmint)
 
-Next.js
+---
 
-React
+## 📈 **Why This MVP Matters**
 
-Tailwind CSS
+Recurmind proves that an autonomous agent can:
 
-shadcn/ui
+*   **Understand** a customer scenario
+*   **Decide** which action to take
+*   **Interact** naturally through messaging
+*   **Execute** a secure tokenized payment
+*   **Close** an order fully on its own
 
-Framer Motion
+This is a foundational building block for autonomous e-commerce systems.
 
-Agent Logic
+---
 
-Context engineering
+## 🔮 **Roadmap (Next Steps)**
 
-Custom state machine
+*   Real WhatsApp Business integration
+*   Shopify MCP + Checkout Kit automation
+*   New agents: PromoAgent, SupportAgent, AdvisorAgent
+*   Multi-agent orchestration
+*   Merchant dashboard (N8N + Metabase)
+*   Error recovery + self-evaluation loops
 
-Automation
+---
 
-n8n (WhatsApp simulation)
+## 👤 **Author**
 
-Payments
-
-Crossmint Agentic Flow
-
-Basis Theory tokenization
-
-Memory
-
-Qdrant vector DB
-
-Dev & Hosting
-
-Local dev via Vercel
-
-HTTPS via ngrok (required for Crossmint)
-
-📈 Why It Matters
-
-Recurmind demonstrates that an autonomous agent can:
-
-Understand a cart abandonment scenario
-
-Message a customer
-
-Negotiate consent
-
-Trigger a secure tokenized payment
-
-Close the order
-
-All without human intervention.
-
-This is the foundation of autonomous e-commerce.
-
-🔮 Roadmap
-
-Real WhatsApp Business integration
-
-Shopify MCP + Checkout Kit integration
-
-New agents: PromoAgent, SupportAgent, AdvisorAgent
-
-Self-evaluating agent behaviors
-
-Merchant dashboard (N8N + Metabase)
-
-👤 Author
-
-Pierre-Louis Sow — Solo Builder
+### **Pierre-Louis Sow — Solo Builder**
 
 Responsible for:
 
-LLM reasoning & action design
+*   LLM reasoning + agent architecture
+*   Next.js + shadcn UI
+*   n8n messaging simulation
+*   Crossmint & Basis Theory payment integration
+*   Qdrant memory
+*   First demo shared with **30 e-commerce merchants**
 
-Next.js + shadcn UI
+https://www.loom.com/share/696b08b3636945ee805a249ff72b37b5 
+---
 
-Agent messaging simulation via n8n
-
-Crossmint agentic payment integration
-
-Basis Theory tokenization
-
-Qdrant memory
-
-MVP demo shared with 30 merchants
-
-📄 License
+## 📄 **License**
 
 MIT License.
+
+---
