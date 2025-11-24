@@ -12,7 +12,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <CopilotKit runtimeUrl="/api/copilotkit">
+    <CopilotKit publicApiKey="ck_pub_b21d133a0f668a7076dd63e575753e78">
       <TooltipProvider>
         <Toaster />
         <Sonner />
